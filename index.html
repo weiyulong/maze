@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>迷宫</title>
+	<style type="text/css">
+		#out {
+			text-align: center;
+		}
+
+		fieldset {
+			padding: 10px;
+			width: 500px;
+			margin: 10px auto;
+		}
+
+		label {
+			margin-left: 5px;
+		}
+	</style>
+	<script type="text/javascript" src="maze.js"></script>
+</head>
+
+<body>
+	<fieldset>
+		<legend>迷宫生成：</legend>
+		<form>
+			<label>宽度：<input id="w" type="text" value="24" /></label>
+			<label>高度：<input id="h" type="text" value="12" /></label>
+			<label><input type="button" value="提交" onClick="mazeto()" /></label>
+		</form>
+	</fieldset>
+	<pre id="out"></pre>
+	<script type="text/javascript">
+		function mazeto() {
+			var w = Math.round(document.getElementById('w').value);
+			var h = Math.round(document.getElementById('h').value);
+			var mazeinfo = new Maze(w, h);
+			console.log(mazeinfo.horiz);
+			console.log(mazeinfo.verti);
+			console.log(mazeinfo.text());
+			document.getElementById('out').innerHTML = mazeinfo.text();
+		};
+	</script>
+</body>
+
+</html>
