@@ -70,7 +70,7 @@ class Maze {
             }
         }
     }
-    text() {
+    text(decrypt = false) {
         let strArr = [];
         for (let y = 0; y < this.h * 2 + 1; y++) {
             let lines = [];
@@ -86,15 +86,15 @@ class Maze {
                         } else if (x == this.w * 2 && y == this.h * 2) {
                             lines[x] = '┛';
                         } else {
-                            if(x==0){
+                            if (x == 0) {
                                 lines[x] = '┣';
-                            }else if(x==this.w*2){
+                            } else if (x == this.w * 2) {
                                 lines[x] = '┫';
-                            }else if(y==0){
+                            } else if (y == 0) {
                                 lines[x] = '┳';
-                            }else if(y==this.h*2){
+                            } else if (y == this.h * 2) {
                                 lines[x] = '┻';
-                            }else{
+                            } else {
                                 lines[x] = '╋';
                             }
                         }
@@ -119,6 +119,17 @@ class Maze {
                     }
                 }
             }
+            if (y % 2 && decrypt) {
+                let path = this.seek();
+                let row = path.filter(grid => grid[1] * 2 - 1 == y);
+                lines = lines.map(function (value, index, array) {
+                    if(row.some(point=>point[0]*2-1==index)){
+                        return '·';
+                    }else{
+                        return value;
+                    }
+                });
+            }
             if (y == 0) { lines[1] = '　'; }
             if (y == 1) { lines[1] = '☆'; }
             if (y == this.h * 2) { lines[this.w * 2 - 1] = '　'; }
@@ -126,5 +137,59 @@ class Maze {
             strArr.push(lines.join('') + '\r\n');
         }
         return strArr.join('');
+    }
+    seek(start = [1, 1], end = [this.w, this.h]) {
+        let here = [];
+        let path = [];
+        let fork = [];
+        let back = [];
+        let next = start;
+        let another = [];
+        do {
+            let neighbors = [];
+            if (path.some(point => point.toString() == next.toString())) {
+                let arrived = false;
+                path = path.filter(function (value, index) {
+                    if (value.toString() == next.toString()) {
+                        arrived = true;
+                        back = path[index - 1];
+                    }
+                    return !arrived;
+                });
+                here = next;
+                for (let i in another) {
+                    if (another[i].fork.toString() == next.toString()) {
+                        neighbors = another[i].neighbors;
+                        another.splice(i, 1);
+                    }
+                }
+            } else {
+                back = here;
+                if (back.toString() != [next[0] - 1, next[1]].toString() && this.verti[next[0] - 1][next[1] - 1]) {
+                    neighbors.push([next[0] - 1, next[1]]);
+                }
+                if (back.toString() != [next[0] + 1, next[1]].toString() && this.verti[next[0]][next[1] - 1]) {
+                    neighbors.push([next[0] + 1, next[1]]);
+                }
+                if (back.toString() != [next[0], next[1] - 1].toString() && this.horiz[next[1] - 1][next[0] - 1]) {
+                    neighbors.push([next[0], next[1] - 1]);
+                }
+                if (back.toString() != [next[0], next[1] + 1].toString() && this.horiz[next[1]][next[0] - 1]) {
+                    neighbors.push([next[0], next[1] + 1]);
+                }
+                here = next;
+            }
+            if (neighbors.length > 1) {
+                next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                fork.push(here);
+                another.push({ fork: here, neighbors: neighbors.filter(value => value != next) });
+            } else if (neighbors.length == 1) {
+                next = neighbors[0];
+            } else {
+                next = fork.pop();
+            }
+            path.push(here);
+        } while (here.toString() != end.toString());
+        return path;
     }
 }

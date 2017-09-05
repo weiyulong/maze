@@ -29,6 +29,7 @@
 			<label>宽度：<input id="w" type="text" value="24" /></label>
 			<label>高度：<input id="h" type="text" value="12" /></label>
 			<label><input type="button" value="提交" onClick="mazeto()" /></label>
+			<label>显示路径 <input id="seek" type="checkbox" value="1" /></label>
 		</form>
 	</fieldset>
 	<pre id="out"></pre>
@@ -36,11 +37,13 @@
 		function mazeto() {
 			var w = Math.round(document.getElementById('w').value);
 			var h = Math.round(document.getElementById('h').value);
+			var decrypt = document.getElementById('seek').checked;
 			var mazeinfo = new Maze(w, h);
 			console.log(mazeinfo.horiz);
 			console.log(mazeinfo.verti);
-			console.log(mazeinfo.text());
-			document.getElementById('out').innerHTML = mazeinfo.text();
+			console.log(mazeinfo.text(true));
+			console.log(mazeinfo.seek());
+			document.getElementById('out').innerHTML = mazeinfo.text(decrypt);
 		};
 	</script>
 </body>
