@@ -12,7 +12,7 @@ class Maze {
         let total = this.w * this.h;
         //初始化起始点设置
         let here = [Math.floor(Math.random() * this.w) + 1, Math.floor(Math.random() * this.h) + 1];
-        //初始化路径点集合
+        //初始化岔路口集合
         let fork = [];
         //初始化未访问路径
         let unvisited = [];
@@ -61,17 +61,22 @@ class Maze {
                 //记录将前进的路径
                 unvisited[next[0]][next[1]] = false;
                 if (neighbors.length > 1) {
+                    //记录当前岔路坐标
                     fork.push(here);
                 }
+                //前进到选的的路径
                 here = next;
                 total--;
             } else {
+                //返回上一个岔路口
                 here = fork.pop();
             }
         }
     }
-    text(decrypt = false) {
+    //以文本的形式输出
+    text(decrypt = false, start = [1, 1], end = [this.w, this.h]) {
         let strArr = [];
+        let path = this.seek(start, end);
         for (let y = 0; y < this.h * 2 + 1; y++) {
             let lines = [];
             if (y % 2 == 0) {
@@ -99,46 +104,34 @@ class Maze {
                             }
                         }
                     } else {
-                        if (this.horiz[y / 2][(x - 1) / 2]) {
-                            lines[x] = '　';
-                        } else {
-                            lines[x] = '━';
-                        }
+                        lines[x] = this.horiz[y / 2][(x - 1) / 2] ? '　' : '━';
                     }
                 }
             } else {
                 for (let x = 0; x < this.w * 2 + 1; x++) {
                     if (x % 2 == 0) {
-                        if (this.verti[x / 2][(y - 1) / 2]) {
-                            lines[x] = '　';
-                        } else {
-                            lines[x] = '┃';
-                        }
+                        lines[x] = this.verti[x / 2][(y - 1) / 2] ? '　' : '┃';
                     } else {
                         lines[x] = '　';
                     }
                 }
             }
             if (y % 2 && decrypt) {
-                let path = this.seek();
                 let row = path.filter(grid => grid[1] * 2 - 1 == y);
-                lines = lines.map(function (value, index, array) {
-                    if(row.some(point=>point[0]*2-1==index)){
-                        return '·';
-                    }else{
-                        return value;
-                    }
+                lines = lines.map((value, index, array) => {
+                    return row.some(point => point[0] * 2 - 1 == index) ? '·' : value;
                 });
             }
-            if (y == 0) { lines[1] = '　'; }
-            if (y == 1) { lines[1] = '☆'; }
-            if (y == this.h * 2) { lines[this.w * 2 - 1] = '　'; }
-            if (y == this.h * 2 - 1) { lines[this.w * 2 - 1] = '★'; }
+            //if (y == 0) { lines[1] = '　'; }
+            if (y == start[1] * 2 - 1) { lines[start[0] * 2 - 1] = '☆'; }
+            //if (y == this.h * 2) { lines[this.w * 2 - 1] = '　'; }
+            if (y == end[1] * 2 - 1) { lines[end[0] * 2 - 1] = '★'; }
             strArr.push(lines.join('') + '\r\n');
         }
         return strArr.join('');
     }
-    seek(start = [1, 1], end = [this.w, this.h]) {
+    //探索迷宫唯一出路
+    seek(start, end) {
         let here = [];
         let path = [];
         let fork = [];
@@ -149,14 +142,13 @@ class Maze {
             let neighbors = [];
             if (path.some(point => point.toString() == next.toString())) {
                 let arrived = false;
-                path = path.filter(function (value, index) {
+                path = path.filter((value, index) => {
                     if (value.toString() == next.toString()) {
                         arrived = true;
                         back = path[index - 1];
                     }
                     return !arrived;
                 });
-                here = next;
                 for (let i in another) {
                     if (another[i].fork.toString() == next.toString()) {
                         neighbors = another[i].neighbors;
@@ -177,8 +169,8 @@ class Maze {
                 if (back.toString() != [next[0], next[1] + 1].toString() && this.horiz[next[1]][next[0] - 1]) {
                     neighbors.push([next[0], next[1] + 1]);
                 }
-                here = next;
             }
+            here = next;
             if (neighbors.length > 1) {
                 next = neighbors[Math.floor(Math.random() * neighbors.length)];
                 fork.push(here);
