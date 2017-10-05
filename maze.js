@@ -130,6 +130,36 @@ class Maze {
         }
         return strArr.join('');
     }
+    //在画布中绘制迷宫
+    draw(ele) {
+        let space = 20;
+        let spot = 1;
+        let width = space * (this.w + 2) + spot * (this.w + 1);
+        let height = space * (this.h + 2) + spot * (this.h + 1);
+        let canvas = document.getElementById(ele);
+        let ctx = canvas.getContext("2d");
+        canvas.width = width;
+        canvas.height = height;
+        ctx.lineWidth = spot;
+        ctx.beginPath();
+        for (let i = 0; i < this.verti.length; i++) {
+            for (let y = 0; y < this.verti[i].length; y++) {
+                ctx.moveTo(space + 1 + (space + 1) * i, (space + 1) * (y + 1));
+                if (!this.verti[i][y]) {
+                    ctx.lineTo(space + 1 + (space + 1) * i, space + (space + 1) * (y + 1));
+                }
+            }
+        }
+        for (let i = 0; i < this.horiz.length; i++) {
+            for (let x = 0; x < this.horiz[i].length; x++) {
+                ctx.moveTo((space + 1) * (x + 1), space + 1 + (space + 1) * i);
+                if(!this.horiz[i][x]){
+                    ctx.lineTo((space + 1) * (x + 1) + space, space + 1 + (space + 1) * i);
+                }
+            }
+        }
+        ctx.stroke();
+    }
     //探索迷宫唯一出路
     seek(start, end) {
         let here = [];

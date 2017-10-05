@@ -33,6 +33,9 @@
 		</form>
 	</fieldset>
 	<pre id="out"></pre>
+	<canvas id="myCanvas">
+		Your browser does not support the HTML5 canvas tag.
+	</canvas>
 	<script type="text/javascript">
 		function mazeto() {
 			var w = Math.round(document.getElementById('w').value);
@@ -42,7 +45,8 @@
 			console.log(mazeinfo.horiz);
 			console.log(mazeinfo.verti);
 			console.log(mazeinfo.text(decrypt));
-			document.getElementById('out').innerHTML = mazeinfo.text(decrypt);
+			//document.getElementById('out').innerHTML = mazeinfo.text(decrypt);
+			mazeinfo.draw('myCanvas');
 		};
 	</script>
 </body>
