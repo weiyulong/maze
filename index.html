@@ -9,9 +9,16 @@
 			text-align: center;
 		}
 
+		#myCanvas {
+			margin: auto;
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+
 		fieldset {
 			padding: 10px;
-			width: 500px;
+			width: 480px;
 			margin: 10px auto;
 		}
 
@@ -28,6 +35,12 @@
 		<form>
 			<label>宽度：<input id="w" type="text" value="24" /></label>
 			<label>高度：<input id="h" type="text" value="12" /></label>
+			<label for="mode">模式：
+				<select name="mode" id="mode">
+					<option value="text">文本模式</option>
+					<option value="draw">绘图模式</option>
+				</select>
+			</label>
 			<label><input type="button" value="提交" onClick="mazeto()" /></label>
 			<label>显示路径 <input id="seek" type="checkbox" value="1" /></label>
 		</form>
@@ -45,8 +58,16 @@
 			console.log(mazeinfo.horiz);
 			console.log(mazeinfo.verti);
 			console.log(mazeinfo.text(decrypt));
-			//document.getElementById('out').innerHTML = mazeinfo.text(decrypt);
-			mazeinfo.draw('myCanvas');
+			var mode = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].value;
+			if (mode == 'text') {
+				document.getElementById('out').style.display='';
+				document.getElementById('out').innerHTML = mazeinfo.text(decrypt);
+				document.getElementById('myCanvas').style.display='none';
+			} else if (mode = 'draw') {
+				document.getElementById('myCanvas').style.display='';
+				mazeinfo.draw('myCanvas');
+				document.getElementById('out').style.display='none';
+			}
 		};
 	</script>
 </body>
